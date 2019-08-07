@@ -89,7 +89,6 @@ public class Device extends Activity implements OnItemClickListener {
 		intent.putExtra(EXTRA_DEVICE_NAME, name);
 		intent.putExtra(EXTRA_DEVICE_UUID,uuid);
 		startActivity(intent);
-/*		MainActivity.instance.finish();*/
 		//finish();
 	}
 }

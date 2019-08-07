@@ -354,20 +354,6 @@ public class Control extends Activity {
 
 
 
-
-
-
-
-
-
-/*	private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
-		@Override
-		public void onReceive(Context ctxt, Intent intent) {
-			int level = intent.getIntExtra(BluetoothLeService.EXTRAS_DEVICE_BATTERY, 0);
-			tv_battery.setText("Battery: "+String.valueOf(level) + "%");
-		}
-	};*/
-
     public static byte[] hexStringToByteArray(String s) {
 
         int len = s.length();
@@ -486,7 +472,7 @@ public class Control extends Activity {
         private void updatebattery(String value) {
             // TODO Auto-generated method stub
             if(value != null){
-                tv_battery.setText(value);
+                tv_battery.setText("Battery: "+value);
             }
         }
         private void updateRSSI(String value) {
@@ -547,7 +533,8 @@ public class Control extends Activity {
         }.start();
     }
 //not necessary
-    /*private void displayData(byte[] data) {
+    /*
+    private void displayData(byte[] data) {
         if (data != null) {
             String dataArray = new String(data);
             Log.d(TAG, "data = " + dataArray);
