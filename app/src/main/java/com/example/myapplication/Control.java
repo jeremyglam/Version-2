@@ -283,8 +283,7 @@ public class Control extends Activity {
                 @Override
                 public boolean onKey(DialogInterface dialog, int keyCode,
                                      KeyEvent event) {
-                    if (keyCode == KeyEvent.KEYCODE_HOME
-                            || keyCode == KeyEvent.KEYCODE_SEARCH) {
+                    if (keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_SEARCH) {
                         return true;
                     }
                     return false;
@@ -540,7 +539,6 @@ public class Control extends Activity {
             Log.d(TAG, "data = " + dataArray);
             tv_rx.setText(dataArray);
         }
-
     }
     */
     @Override
