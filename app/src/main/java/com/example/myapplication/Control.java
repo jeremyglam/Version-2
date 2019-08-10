@@ -78,8 +78,9 @@ public class Control extends Activity {
     private static final long SCAN_PERIOD = 5000;//5s
     private Dialog mDialog;
     public static List<BluetoothDevice> mDevices = new ArrayList<BluetoothDevice>();
-    public static Control instance = null;
 
+    public static Control instance1 = null;
+    public static Control instance2 = null;
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
 
@@ -87,27 +88,27 @@ public class Control extends Activity {
 //end code #1
 
 
-    Button but_send1,but_connect,but_stop;
-    TextView tv_deviceName,tv_deviceAddr,tv_connstatus,tv_currentRSSI,tv_targetUUID,tv_rx,tv_battery;
-    EditText et_duration,et_white,et_yellow;
-    ExpandableListView lv;
+    Button but_send1,but_scan1,but_stop1;
+    TextView tv_deviceName1,tv_deviceAddr1,tv_connstatus1,tv_currentRSSI1,tv_targetUUID1,tv_rx1,tv_battery1;
+    EditText et_duration1,et_white1,et_yellow1;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tv_deviceName = (TextView) findViewById(R.id.tv_Name);
-        tv_deviceAddr = (TextView) findViewById(R.id.tv_MAC);
-        tv_connstatus = (TextView) findViewById(R.id.tv_con);
-        tv_currentRSSI = (TextView) findViewById(R.id.tv_RSSI);
-        tv_currentRSSI.setText("null");
-        tv_targetUUID = (TextView) findViewById(R.id.tv_UUID);
-        tv_targetUUID.setText("null");
-        tv_rx = (TextView) findViewById(R.id.TV_RX);
-        et_duration = (EditText) findViewById(R.id.ET_TX1);
-        et_white = (EditText) findViewById(R.id.ET_TX3);
-        et_yellow = (EditText) findViewById(R.id.ET_TX4);
+        tv_deviceName1 = (TextView) findViewById(R.id.tv_Name1);
+        tv_deviceAddr1 = (TextView) findViewById(R.id.tv_MAC1);
+        tv_connstatus1 = (TextView) findViewById(R.id.tv_con1);
+        tv_currentRSSI1 = (TextView) findViewById(R.id.tv_RSSI1);
+        tv_currentRSSI1.setText("null");
+        tv_targetUUID1 = (TextView) findViewById(R.id.tv_UUID1);
+        tv_targetUUID1.setText("null");
+        tv_rx1 = (TextView) findViewById(R.id.TV_RX1);
+        et_duration1 = (EditText) findViewById(R.id.ET_TX1);
+        et_white1 = (EditText) findViewById(R.id.ET_TX2);
+        et_yellow1 = (EditText) findViewById(R.id.ET_TX3);
 
 
 /*        lv = (ExpandableListView) this.findViewById(R.id.ELV1);
@@ -117,18 +118,18 @@ public class Control extends Activity {
         Log.d(TAG, "Control onCreate");
         mDeviceAddress = intent.getStringExtra(Device.EXTRA_DEVICE_ADDRESS);
         mDeviceName = intent.getStringExtra(Device.EXTRA_DEVICE_NAME);
-
         mDeviceUuid = intent.getStringExtra(String.valueOf(target_character));
+
         Log.d(TAG, "mDeviceAddress = " + mDeviceAddress);
         Log.d(TAG, "mDeviceName = " + mDeviceName);
         Log.d(TAG, "mDeviceUUID = " + mDeviceUuid);
 //		Log.d(TAG, "mDeviceBatt = " + mDeviceBatt);
-        tv_deviceName.setText(mDeviceName);
-        tv_deviceAddr.setText(mDeviceAddress);
-        tv_targetUUID.setText(mDeviceUuid);
-        et_duration.setText("3");
-        et_yellow.setText("150");
-        et_white.setText("150");
+        tv_deviceName1.setText(mDeviceName);
+        tv_deviceAddr1.setText(mDeviceAddress);
+        tv_targetUUID1.setText(mDeviceUuid);
+        et_duration1.setText("3");
+        et_yellow1.setText("150");
+        et_white1.setText("150");
         Log.d(TAG, "start BluetoothLE Service");
 
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
@@ -159,8 +160,8 @@ public class Control extends Activity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
-        Button btn = (Button) findViewById(R.id.but_scan2);
-        btn.setOnClickListener(new View.OnClickListener() {
+        Button but_scan1 = (Button) findViewById(R.id.but_scan1);
+        but_scan1.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -178,24 +179,37 @@ public class Control extends Activity {
                 }, SCAN_PERIOD);
             }
         });
-        instance = this;
+        instance1 = this;
 
         //end code #2
 
+        Button but_scan2 = (Button) findViewById(R.id.but_scan2);
+        but_scan2.setOnClickListener(new View.OnClickListener() {
 
-
-/*		BluetoothGattCharacteristic characteristic = getIntent().getExtras("uuid");
-		target_character2 = characteristic;*/
-
-/*		Log.w(TAG, "cmd onservicesdiscovered startingggg. target char: "+target_character);
-		Log.w(TAG, "cmd onservicesdiscovered startingggg. target char: "+mBluetoothLeService.target_character);*/
+            @Override
+            public void onClick(View v) {
+                scanLeDevice();
+                showRoundProcessDialog(Control.this, R.layout.loading_process_dialog_anim);
+                Timer mTimer = new Timer();
+                mTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Intent deviceListIntent = new Intent(getApplicationContext(),
+                                Device.class);
+                        startActivity(deviceListIntent);
+                        mDialog.dismiss();
+                    }
+                }, SCAN_PERIOD);
+            }
+        });
+        instance2 = this;
 
         //battery indicator
-        tv_battery = (TextView) this.findViewById(R.id.tv_BATTERY);
+        tv_battery1 = (TextView) this.findViewById(R.id.tv_BATTERY1);
         //	this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
 
-        but_send1 = (Button) findViewById(R.id.but_send);
+        but_send1 = (Button) findViewById(R.id.but_send1);
         but_send1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,14 +217,14 @@ public class Control extends Activity {
                     Log.d(TAG, "cmd start");
 
 
-                    String cmd_duration = et_duration.getText().toString();
-                    String cmd_white = et_white.getText().toString();
-                    String cmd_yellow = et_yellow.getText().toString();
+                    String cmd_duration = et_duration1.getText().toString();
+                    String cmd_white = et_white1.getText().toString();
+                    String cmd_yellow = et_yellow1.getText().toString();
 
 
                     if (!cmd_duration.isEmpty() && !cmd_white.isEmpty() && !cmd_yellow.isEmpty()) {
 
-                        int int_Duration = Integer.parseInt(et_duration.getText().toString());
+                        int int_Duration = Integer.parseInt(et_duration1.getText().toString());
                         String hex_Duration = Integer.toHexString(int_Duration);
                         String hex_Duration2 = ("00" + hex_Duration).substring(hex_Duration.length());
 
@@ -218,12 +232,12 @@ public class Control extends Activity {
                         Log.d(TAG, "before cmd: hex_duration" + hex_Duration + " hexDuration2: " + hex_Duration2);
 
 
-                        int int_White = Integer.parseInt(et_white.getText().toString());
+                        int int_White = Integer.parseInt(et_white1.getText().toString());
                         String hex_white = Integer.toHexString(int_White);
                         String hex_white2 = ("00" + hex_white).substring(hex_white.length());
                         Log.d(TAG, "before cmd: hex_white" + hex_white + " hexWhite2: " + hex_white2);
 
-                        int int_Yellow = Integer.parseInt(et_yellow.getText().toString());
+                        int int_Yellow = Integer.parseInt(et_yellow1.getText().toString());
                         String hex_Yellow = Integer.toHexString(int_Yellow);
                         String hex_Yellow2 = ("00" + hex_Yellow).substring(hex_Yellow.length());
                         Log.d(TAG, "before cmd: hex_yellow" + hex_Yellow + " hexYellow2: " + hex_Yellow2);
@@ -259,21 +273,14 @@ public class Control extends Activity {
             }
         });
 
-        but_stop = (Button) findViewById(R.id.but_stop);
-        but_stop.setOnClickListener(new OnClickListener() {
+        but_stop1 = (Button) findViewById(R.id.but_stop1);
+        but_stop1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 mBluetoothLeService.disconnect();
             }
         });
 
-        but_connect = (Button) findViewById(R.id.but_connect1);
-        but_connect.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mBluetoothLeService.connect(mDeviceAddress);
-            }
-        });
     }
 
     //main activity.java code #3
@@ -471,27 +478,27 @@ public class Control extends Activity {
         private void updatebattery(String value) {
             // TODO Auto-generated method stub
             if(value != null){
-                tv_battery.setText("Battery: "+value);
+                tv_battery1.setText("Battery: "+value);
             }
         }
         private void updateRSSI(String value) {
             // TODO Auto-generated method stub
             if(value != null){
-                tv_currentRSSI.setText(value);
+                tv_currentRSSI1.setText(value);
             }
         }
         private void updateACK(String value) {
             // TODO Auto-generated method stub
             if(value != null){
-                tv_rx.setText(value);
+                tv_rx1.setText(value);
             }
         }
         private void updateConnectionState(boolean status) {
             // TODO Auto-generated method stub
             if(status){
-                tv_connstatus.setText("connected");
+                tv_connstatus1.setText("connected");
             }else{
-                tv_connstatus.setText("unconnected");
+                tv_connstatus1.setText("unconnected");
             }
         }
     };
@@ -669,7 +676,7 @@ public class Control extends Activity {
         target_character = mBluetoothLeService.target_character;
         rx_character = mBluetoothLeService.rx_character;
         Log.w(TAG, "cmd onservicesdiscovered startinggggafterservicesenum4. target char: "+target_character);
-        tv_targetUUID.setText(target_character.getUuid().toString());
+        tv_targetUUID1.setText(target_character.getUuid().toString());
 
     }
 
@@ -689,7 +696,7 @@ public class Control extends Activity {
 
                         target_character = characteristic;
 
-                        tv_targetUUID.setText(characteristic.getUuid().toString());
+                        tv_targetUUID1.setText(characteristic.getUuid().toString());
 
                         final int charaProp = characteristic.getProperties();
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
